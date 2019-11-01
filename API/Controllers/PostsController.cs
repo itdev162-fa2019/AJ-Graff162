@@ -39,6 +39,11 @@ namespace API.Controllers
             return this.context.Posts.Find(id);
         }
 
+        /// <summary>
+        /// Post api/post
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult<Post> Create([FromBody]Post request)
         {
@@ -59,6 +64,36 @@ namespace API.Controllers
             }
 
             throw new Exception("Error creating post");
+        }
+
+        /// <summary>
+        /// PUT api/put
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public ActionResult<Post> Update([FromBody]Post request)
+        {
+            var post = context.Posts.Find(request.Id);
+
+            if (request == null)
+            {
+                throw new Exception("Could not find post");
+            }
+
+            // Update the post properties with request values, if present
+            post.Title = request.Title != null ? request.Title : post.Title;
+            post.Body = request.Body != null ? request.Body : post.Body;
+            post.Date = request.Date != null ? request.Date : post.Date;
+
+            var success = context.SaveChanges() > 0;
+
+            if (success)
+            {
+                return post;
+            }
+
+            throw new Exception("Error updating post");
         }
     }
 }
